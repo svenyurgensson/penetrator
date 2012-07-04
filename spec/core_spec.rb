@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'penetrator'
 require 'minitest/spec'
 require 'minitest/autorun'
@@ -16,7 +17,7 @@ describe 'mixing behavior' do
     def test; end
   end
 
-  it 'have traits methods' do
+  it 'add trait methods' do
     class Victim
       behave_like 'first'
     end
@@ -32,7 +33,7 @@ describe 'mixing behavior' do
   end
 
 
-  it 'have traits methods' do
+  it 'add traits methods from nested modules' do
     class Victim
       behave_like 'outer/inner'
     end
@@ -63,34 +64,26 @@ describe 'methods chainings' do
 
 end # methods chainings
 
-
-# TODO
 describe 'callbacks' do
-  module FirstTrait
-    def test; end
+  module CallbackTrait
   end
 
   it 'have traits methods' do
+    class Victim; end
+    CallbackTrait.expects(:included).with(Victim)
     class Victim
-      behave_like 'first'
+      behave_like 'callback'
     end
   end
-
 end # callbacks
-
-
-
 
 describe 'visibility' do
   module VisibilityTrait
-    def public_method_from_trait
-    end
+    def public_method_from_trait;   end
     protected
-    def protected_method_from_trait
-    end
+    def protected_method_from_trait;  end
     private
-    def private_method_from_trait
-    end
+    def private_method_from_trait;   end
   end
 
   it 'allow trait to define methods with different visibility' do
@@ -107,18 +100,41 @@ describe 'visibility' do
 
 end # visibility
 
-
 describe 'trait arguments' do
-  module HaveArgsTrait
-    def test; end
-  end
+  module HaveArgsTrait; end
 
   it 'receive trait arguments' do
-    lambda {
-      class Victim
-        behave_like 'have_args', 'arg1', 'arg2'
-      end
-    }.wont_raise
+    class Victim; end
+    Victim.expects(:behave_like).with('have_args', 'arg1', 'arg2')
+
+    class Victim
+      behave_like 'have_args', 'arg1', 'arg2'
+    end
+
   end
 
-end
+  it 'base holds arguments' do
+    class Victim
+      behave_like 'have_args', 'arg1', 'arg2'
+    end
+    Victim.class_variable_get(:@@have_args_args).must_equal ['arg1','arg2']
+  end
+
+
+  describe 'arguments defined before trait included' do
+    module HandyTrait
+      def self.included(base)
+        base.send :stub, base.class_variable_get(:@@handy_args)
+      end
+    end
+
+    class Victim; end
+    Victim.expects(:stub).with(['arg'])
+
+    class Victim
+      behave_like :handy, 'arg'
+    end
+  end # 'trait use arguments'
+
+
+end # trait argument

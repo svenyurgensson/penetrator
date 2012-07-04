@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # These methods are backported from Rails so modularity works with plain Ruby.
 
 module Penetrator
