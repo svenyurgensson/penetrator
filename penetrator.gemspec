@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["jurbat@gmail.com"]
   gem.description   = %q{Implement traits behavior to get rid of code repetition}
   gem.summary       = %q{Implement traits behavior to get rid of code repetition}
-  gem.homepage      = "http://github/svenyurgensson/penetrator"
+  gem.homepage      = "https://github.com/svenyurgensson/penetrator"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
