@@ -1,7 +1,7 @@
 # Penetrator
 
 This gem aimed to help with reuse code in ruby projects.
-Inspired from [modularity | http://github.com/makandra/modularity] gem but slightly changed for supporting
+Highly inspired from http://github.com/makandra/modularity gem but slightly modified for supporting
 conventional *super* inheritance chaining methods.
 
 
@@ -22,13 +22,14 @@ Or install it yourself as:
 ## Usage
 (Rails specific example)
 
-config/application.rb
+*config/application.rb*
+```ruby
+config.autoload_paths += Dir[Rails.root.join( 'app', '**/*' )].select { |fn| File.directory?(fn) }
+```
 
-        config.autoload_paths += Dir[Rails.root.join( 'app', '**/*' )].select { |fn| File.directory?(fn) }
-
-app/controllers/traits/crudable_trait.rb
-
-        module CrudTrait
+*app/controllers/traits/crudable_trait.rb*
+```ruby
+        module CrudableTrait
           #
           # Implementation
           public
@@ -50,20 +51,21 @@ app/controllers/traits/crudable_trait.rb
             end
           end
 
-          ... and so on
+          # ... and so on
 
           private
             def take_layout
-                ...
+               # ...
             end
 
             def resource
               @_resource ||= resource_class.all
             end
          end
+```
 
-app/controllers/accomodations_controller.rb
-
+*app/controllers/accomodations_controller.rb*
+```ruby
         class AccomodationsController < ApplicationController
           #
           # CrudableTrait required parameters
@@ -77,7 +79,7 @@ app/controllers/accomodations_controller.rb
           # Override public traits method
           def index
             if current_user.is_admin?
-                ...
+              # ...
             else
               super
             end
@@ -90,7 +92,7 @@ app/controllers/accomodations_controller.rb
             "accomodations.name desc"
           end
         end
-
+```
 
 
 
