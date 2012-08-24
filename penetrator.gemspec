@@ -17,5 +17,6 @@ Gem::Specification.new do |gem|
   if RUBY_VERSION < '1.9.0'
     gem.add_development_dependency "minitest"
   end
+  gem.add_development_dependency "rake"
   gem.add_development_dependency "mocha"
 end
