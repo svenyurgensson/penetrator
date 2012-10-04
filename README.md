@@ -2,8 +2,8 @@
 
 This gem aimed to help with reuse code in ruby projects.
 Highly inspired from http://github.com/makandra/modularity gem but slightly modified for supporting
-conventional *super* inheritance chaining methods.
-Also much of code was shamelessly borrowed from ActiveSupport::Concern and I should say thanks that Ruby Hackers, who wrote it.
+conventional *super* inheritance methods chaining.
+Also much of code was shamelessly borrowed from `ActiveSupport::Concern` and I should say thanks that Ruby Hackers, who wrote it.
 
 ## Installation
 
@@ -27,7 +27,7 @@ Or install it yourself as:
 config.autoload_paths += Rails.root.join( 'app', 'traits' )
 ```
 
-*app/controllers/traits/crudable_trait.rb*
+# File: *app/controllers/traits/crudable_trait.rb*
 ```ruby
         module CrudableTrait
           included do
@@ -71,7 +71,7 @@ config.autoload_paths += Rails.root.join( 'app', 'traits' )
          end
 ```
 
-*app/controllers/accomodations_controller.rb*
+# File: *app/controllers/accomodations_controller.rb*
 ```ruby
         class AccomodationsController < ApplicationController
           #
@@ -112,12 +112,11 @@ config.autoload_paths += Rails.root.join( 'app', 'traits' )
         end
 ```
 
-What make this gem different from ActiveSupport::Concern ?
-hell, here you can _parameterize_ your included modules-traits!
+What make this gem different from `ActiveSupport::Concern` ?
+Well, here you can _parameterize_ your included modules-traits!
 (Extracted from `spec/coerce_spec.rb` )
 
-    # File:  *app/traits/can_have_args_trait.rb*
-
+# File:  *app/traits/can_have_args_trait.rb*
 ```ruby
     module CanHaveArgsTrait
       extend Penetrator::Concern
@@ -131,7 +130,7 @@ hell, here you can _parameterize_ your included modules-traits!
     end # CanHaveArgs
 ```
 
-    # File:  *app/models/my_model.rb*
+# File:  *app/models/my_model.rb*
 ```ruby
       class Victim
         behaves_like :CanHaveArgs, 'arg1', 'arg2'
@@ -143,7 +142,7 @@ hell, here you can _parameterize_ your included modules-traits!
       obj.arg2  # => 'arg2-chunked!'
 ```
 
-Also you can freely utilize ClassMethods submodule as with ActiveSupport::Concern
+Also you can freely utilize `ClassMethods` submodule as you usually do with `ActiveSupport::Concern`
 
 ```ruby
       module RichTrait
