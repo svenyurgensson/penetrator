@@ -27,7 +27,7 @@ Or install it yourself as:
 config.autoload_paths += Rails.root.join( 'app', 'traits' )
 ```
 
-# File: *app/controllers/traits/crudable_trait.rb*
+File: *app/controllers/traits/crudable_trait.rb*
 ```ruby
         module CrudableTrait
           included do
@@ -71,7 +71,7 @@ config.autoload_paths += Rails.root.join( 'app', 'traits' )
          end
 ```
 
-# File: *app/controllers/accomodations_controller.rb*
+File: *app/controllers/accomodations_controller.rb*
 ```ruby
         class AccomodationsController < ApplicationController
           #
@@ -112,11 +112,11 @@ config.autoload_paths += Rails.root.join( 'app', 'traits' )
         end
 ```
 
-What make this gem different from `ActiveSupport::Concern` ?
+What makes this gem different from `ActiveSupport::Concern` ?
 Well, here you can _parameterize_ your included modules-traits!
 (Extracted from `spec/coerce_spec.rb` )
 
-# File:  *app/traits/can_have_args_trait.rb*
+File:  *app/traits/can_have_args_trait.rb*
 ```ruby
     module CanHaveArgsTrait
       extend Penetrator::Concern
@@ -130,7 +130,7 @@ Well, here you can _parameterize_ your included modules-traits!
     end # CanHaveArgs
 ```
 
-# File:  *app/models/my_model.rb*
+File:  *app/models/my_model.rb*
 ```ruby
       class Victim
         behaves_like :CanHaveArgs, 'arg1', 'arg2'
