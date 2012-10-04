@@ -3,7 +3,7 @@
 This gem aimed to help with reuse code in ruby projects.
 Highly inspired from http://github.com/makandra/modularity gem but slightly modified for supporting
 conventional *super* inheritance chaining methods.
-Also shameless borrowed code from ActiveSupport::Coerce and I should say thanks that Ruby Hackers, who wrote it.
+Also much of code was shamelessly borrowed from ActiveSupport::Coerce and I should say thanks that Ruby Hackers, who wrote it.
 
 ## Installation
 
@@ -30,12 +30,14 @@ config.autoload_paths += Rails.root.join( 'app', 'traits' )
 *app/controllers/traits/crudable_trait.rb*
 ```ruby
         module CrudableTrait
+          included do
+           helper_method :resource, :resources # they are will be used in views
+          end
           #
           # Implementation
           public
 
           def index
-            @accomodation = resource
             respond_to do |format|
               format.html { render layout: take_layout }
               format.json { render json:   resources   }
@@ -59,8 +61,13 @@ config.autoload_paths += Rails.root.join( 'app', 'traits' )
             end
 
             def resource
-              @_resource ||= resource_class.all
+              @_resource ||= resource_class.find(params[:id])
             end
+
+            def resources
+              @_resources ||= resource_class.order(default_order).all
+            end
+
          end
 ```
 
@@ -68,7 +75,7 @@ config.autoload_paths += Rails.root.join( 'app', 'traits' )
 ```ruby
         class AccomodationsController < ApplicationController
           #
-          # CrudableTrait required this mehod
+          # CrudableTrait assumes that this mehod exists
           private
           def resource_class
             Accomodation
@@ -86,6 +93,7 @@ config.autoload_paths += Rails.root.join( 'app', 'traits' )
           end
 
           private
+
           # Override traits methods
           #
           def default_order
@@ -93,6 +101,7 @@ config.autoload_paths += Rails.root.join( 'app', 'traits' )
           end
 
           public
+
           # Override traits methods
           # with respecting call chaining
           #
