@@ -3,7 +3,7 @@
 This gem aimed to help with reuse code in ruby projects.
 Highly inspired from http://github.com/makandra/modularity gem but slightly modified for supporting
 conventional *super* inheritance chaining methods.
-Also much of code was shamelessly borrowed from ActiveSupport::Coerce and I should say thanks that Ruby Hackers, who wrote it.
+Also much of code was shamelessly borrowed from ActiveSupport::Concern and I should say thanks that Ruby Hackers, who wrote it.
 
 ## Installation
 
@@ -112,7 +112,52 @@ config.autoload_paths += Rails.root.join( 'app', 'traits' )
         end
 ```
 
+What make this gem different from ActiveSupport::Concern ?
+hell, here you can _parameterize_ your included modules-traits!
+(Extracted from `spec/coerce_spec.rb` )
 
+    # File:  *app/traits/can_have_args_trait.rb*
+
+```ruby
+    module CanHaveArgsTrait
+      extend Penetrator::Concern
+      included do |*args|
+        args.each do |method_name|
+          define_method(method_name) do
+            method_name.to_s + "-chunked!"
+          end
+        end
+      end # included
+    end # CanHaveArgs
+```
+
+    # File:  *app/models/my_model.rb*
+```ruby
+      class Victim
+        behaves_like :CanHaveArgs, 'arg1', 'arg2'
+      end
+
+      obj = Victim.new
+
+      obj.arg1  # => 'arg1-chunked!'
+      obj.arg2  # => 'arg2-chunked!'
+```
+
+Also you can freely utilize ClassMethods submodule as with ActiveSupport::Concern
+
+```ruby
+      module RichTrait
+        extend Penetrator::Concern
+        module ClassMethods
+          def class_method
+            ... add what you want ...
+          end
+        end
+
+        def instance_method
+        end
+      end
+```
 
 ## Contributing
 
