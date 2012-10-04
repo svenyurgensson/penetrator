@@ -3,7 +3,7 @@
 This gem aimed to help with reuse code in ruby projects.
 Highly inspired from http://github.com/makandra/modularity gem but slightly modified for supporting
 conventional *super* inheritance chaining methods.
-
+Also shameless borrowed code from ActiveSupport::Coerce and I should say thanks that Ruby Hackers, who wrote it.
 
 ## Installation
 
@@ -24,7 +24,7 @@ Or install it yourself as:
 
 *config/application.rb*
 ```ruby
-config.autoload_paths += Dir[Rails.root.join( 'app', '**/*' )].select { |fn| File.directory?(fn) }
+config.autoload_paths += Rails.root.join( 'app', 'traits' )
 ```
 
 *app/controllers/traits/crudable_trait.rb*
@@ -51,7 +51,7 @@ config.autoload_paths += Dir[Rails.root.join( 'app', '**/*' )].select { |fn| Fil
             end
           end
 
-          # ... and so on
+          # ... and so on ...
 
           private
             def take_layout
@@ -68,7 +68,7 @@ config.autoload_paths += Dir[Rails.root.join( 'app', '**/*' )].select { |fn| Fil
 ```ruby
         class AccomodationsController < ApplicationController
           #
-          # CrudableTrait required parameters
+          # CrudableTrait required this mehod
           private
           def resource_class
             Accomodation
@@ -91,6 +91,15 @@ config.autoload_paths += Dir[Rails.root.join( 'app', '**/*' )].select { |fn| Fil
           def default_order
             "accomodations.name desc"
           end
+
+          public
+          # Override traits methods
+          # with respecting call chaining
+          #
+          def kill_all_humans
+            "Yes" or super
+          end
+
         end
 ```
 
