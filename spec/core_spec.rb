@@ -6,7 +6,7 @@ require 'mocha'
 
 describe 'Class' do
   it 'should be accesable' do
-    Class.must_respond_to :behave_like
+    Class.must_respond_to :behaves_like
   end
 end # Class method
 
@@ -19,7 +19,7 @@ describe 'mixing behavior' do
 
   it 'add trait methods' do
     class Victim
-      behave_like 'first'
+      behaves_like 'first'
     end
 
     Victim.new.must_respond_to :test
@@ -35,7 +35,7 @@ describe 'mixing behavior' do
 
   it 'add traits methods from nested modules' do
     class Victim
-      behave_like 'outer/inner'
+      behaves_like 'outer/inner'
     end
     Victim.new.must_respond_to :inner_test
   end
@@ -53,7 +53,7 @@ describe 'methods chainings' do
 
   it 'have traits methods' do
     class Victim
-      behave_like 'super'
+      behaves_like 'super'
       def test
         'this from class and that ' + super
       end
@@ -72,23 +72,23 @@ describe 'callbacks' do
     class Victim; end
     CallbackTrait.expects(:included).with(Victim)
     class Victim
-      behave_like 'callback'
+      behaves_like 'callback'
     end
   end
 end # callbacks
 
 describe 'visibility' do
   module VisibilityTrait
-    def public_method_from_trait;   end
+    def public_method_from_trait;    end
     protected
-    def protected_method_from_trait;  end
+    def protected_method_from_trait; end
     private
     def private_method_from_trait;   end
   end
 
   it 'allow trait to define methods with different visibility' do
     class Victim
-      behave_like 'visibility'
+      behaves_like 'visibility'
     end
 
     instance = Victim.new
@@ -99,42 +99,3 @@ describe 'visibility' do
   end
 
 end # visibility
-
-describe 'trait arguments' do
-  module HaveArgsTrait; end
-
-  it 'receive trait arguments' do
-    class Victim; end
-    Victim.expects(:behave_like).with('have_args', 'arg1', 'arg2')
-
-    class Victim
-      behave_like 'have_args', 'arg1', 'arg2'
-    end
-
-  end
-
-  it 'base holds arguments' do
-    class Victim
-      behave_like 'have_args', 'arg1', 'arg2'
-    end
-    Victim.class_variable_get(:@@have_args_args).must_equal ['arg1','arg2']
-  end
-
-
-  describe 'arguments defined before trait included' do
-    module HandyTrait
-      def self.included(base)
-        base.send :stub, base.class_variable_get(:@@handy_args)
-      end
-    end
-
-    class Victim; end
-    Victim.expects(:stub).with(['arg'])
-
-    class Victim
-      behave_like :handy, 'arg'
-    end
-  end # 'trait use arguments'
-
-
-end # trait argument
