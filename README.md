@@ -164,7 +164,7 @@ Also you can freely utilize `ClassMethods` internal module as you usually do wit
 
 ```
 
-You can ever extend arbitrary instance of any class with your trait:
+You can even extend arbitrary instance of any class with your trait:
 
 ```ruby
 
@@ -176,8 +176,10 @@ You can ever extend arbitrary instance of any class with your trait:
       end
     end
 
-    string_of_dirty_html = "Something <span>dirty</span> and even <marquee>fearing ugly</marquee>
+    string_of_dirty_html = "Something <span>dirty</span> and even <marquee>fearing ugly</marquee>"
     string_of_dirty_html.behave_like 'html_sanitizer'
+    ...
+
 
 ```
 
