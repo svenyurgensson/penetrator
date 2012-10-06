@@ -1,10 +1,10 @@
 # Penetrator
 
-This gem aimed to help with reuse code in ruby projects.
-Highly inspired from http://github.com/makandra/modularity gem but slightly modified for supporting
+This gem aimed to help improving code reuse in ruby projects.
+Highly inspired by http://github.com/makandra/modularity gem but slightly modified for supporting
 conventional *super* inheritance methods chaining.
-Also much of code was shamelessly borrowed from `ActiveSupport::Concern` and I should say thanks that Ruby Hackers, who wrote it.
-All what left to do for me - it's just take the best from both worlds.
+Also much of code was shamelessly borrowed from `ActiveSupport::Concern` so I should say thanks that Ruby Hackers, who wrote it.
+All that what left to do for me - just to take the best from both worlds.
 
 ## Installation
 
@@ -16,7 +16,7 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+Or install it yourself:
 
     $ gem install penetrator
 
