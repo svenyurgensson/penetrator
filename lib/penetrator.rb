@@ -1,8 +1,9 @@
 # -*- encoding : utf-8 -*-
 require "penetrator/inflector"
-require "penetrator/version"
 
 module Penetrator
+  autoload :Version, 'penetrator/version'
+
   module Concern
     def self.extended(base) #:nodoc:
       base.instance_variable_set("@_dependencies", [])

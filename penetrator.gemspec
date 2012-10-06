@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   gem.name          = "penetrator"
   gem.require_paths = ["lib"]
-  gem.version       = Penetrator::VERSION
+  gem.version       = Penetrator::Version.to_s
   if RUBY_VERSION < '1.9.0'
     gem.add_development_dependency "minitest"
   end
