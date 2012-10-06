@@ -90,28 +90,3 @@ end
    end
 
 end
-
-describe 'when object of any class extended by trait' do
-  module ObjectRelatedTrait
-    extend Penetrator::Concern
-    def testing_method
-      "It Works!"
-    end
-  end
-
-  it 'could extend particular object' do
-     object = Object.new
-     object.behaves_like "object_related"
-     object.must_respond_to :testing_method
-     object.testing_method.must_be :==, 'It Works!'
-  end
-
-  it 'not extend others objects the same class' do
-     object = Object.new
-     object.behaves_like "object_related"
-
-     second_object = Object.new
-     second_object.wont_respond_to :testing_method
-  end
-
-end

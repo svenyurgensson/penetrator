@@ -4,6 +4,7 @@ This gem aimed to help with reuse code in ruby projects.
 Highly inspired from http://github.com/makandra/modularity gem but slightly modified for supporting
 conventional *super* inheritance methods chaining.
 Also much of code was shamelessly borrowed from `ActiveSupport::Concern` and I should say thanks that Ruby Hackers, who wrote it.
+All what left to do for me - it's just take the best from both worlds.
 
 ## Installation
 
@@ -24,92 +25,93 @@ Or install it yourself as:
 
 *config/application.rb*
 ```ruby
-config.autoload_paths += Rails.root.join( 'app', 'traits' )
+    config.autoload_paths += Rails.root.join( 'app', 'traits' )
 ```
 
 File: *app/controllers/traits/crudable_trait.rb*
 ```ruby
-        module CrudableTrait
-          included do
-           helper_method :resource, :resources # they are will be used in views
+
+      module CrudableTrait
+        included do
+         helper_method :resource, :resources # they are will be used in views
+        end
+        #
+        # Implementation
+        public
+
+        def index
+          respond_to do |format|
+            format.html { render layout: take_layout }
+            format.json { render json:   resources   }
+            format.js
           end
-          #
-          # Implementation
-          public
+        end
 
-          def index
-            respond_to do |format|
-              format.html { render layout: take_layout }
-              format.json { render json:   resources   }
-              format.js
-            end
+        def show
+          respond_to do |format|
+            format.html { render layout: take_layout }
+            format.json { render json:   resource    }
+            format.js
+          end
+        end
+
+        # ... and so on ...
+
+        private
+          def take_layout
+             # ...
           end
 
-          def show
-            respond_to do |format|
-              format.html { render layout: take_layout }
-              format.json { render json:   resource    }
-              format.js
-            end
+          def resource
+            @_resource ||= resource_class.find(params[:id])
           end
 
-          # ... and so on ...
-
-          private
-            def take_layout
-               # ...
-            end
-
-            def resource
-              @_resource ||= resource_class.find(params[:id])
-            end
-
-            def resources
-              @_resources ||= resource_class.order(default_order).all
-            end
-
-         end
+          def resources
+            @_resources ||= resource_class.order(default_order).all
+          end
+       end
 ```
 
 File: *app/controllers/accomodations_controller.rb*
 ```ruby
-        class AccomodationsController < ApplicationController
-          #
-          # CrudableTrait assumes that this mehod exists
-          private
-          def resource_class
-            Accomodation
-          end
 
-          behave_like "crudable"
-
-          # Override public traits method
-          def index
-            if current_user.is_admin?
-              # ...
-            else
-              super
-            end
-          end
-
-          private
-
-          # Override traits methods
-          #
-          def default_order
-            "accomodations.name desc"
-          end
-
-          public
-
-          # Override traits methods
-          # with respecting call chaining
-          #
-          def kill_all_humans
-            "Yes" or super
-          end
-
+      class AccomodationsController < ApplicationController
+        #
+        # CrudableTrait assumes that this mehod exists
+        private
+        def resource_class
+          Accomodation
         end
+
+        behave_like "crudable"
+
+        # Override public traits method
+        def index
+          if current_user.is_admin?
+            # ...
+          else
+            super
+          end
+        end
+
+        private
+
+        # Override traits methods
+        #
+        def default_order
+          "accomodations.name desc"
+        end
+
+        public
+
+        # Override traits methods
+        # with respecting call chaining
+        #
+        def kill_all_humans
+          "Yes" or super
+        end
+
+      end
 ```
 
 What makes this gem different from `ActiveSupport::Concern` ?
@@ -132,31 +134,53 @@ File:  *app/traits/can_have_args_trait.rb*
 
 File:  *app/models/my_model.rb*
 ```ruby
-      class Victim
-        behaves_like :CanHaveArgs, 'arg1', 'arg2'
-      end
 
-      obj = Victim.new
+    class Victim
+      behaves_like :CanHaveArgs, 'arg1', 'arg2'
+    end
 
-      obj.arg1  # => 'arg1-chunked!'
-      obj.arg2  # => 'arg2-chunked!'
+    obj = Victim.new
+
+    obj.arg1  # => 'arg1-chunked!'
+    obj.arg2  # => 'arg2-chunked!'
+
 ```
 
-Also you can freely utilize `ClassMethods` submodule as you usually do with `ActiveSupport::Concern`
+Also you can freely utilize `ClassMethods` internal module as you usually do with `ActiveSupport::Concern`
 
 ```ruby
-      module RichTrait
-        extend Penetrator::Concern
-        module ClassMethods
-          def class_method
-            ... add what you want ...
-          end
-        end
 
-        def instance_method
+    module RichTrait
+      extend Penetrator::Concern
+      module ClassMethods
+        def class_method
+          ... add what you want ...
         end
       end
+
+      def instance_method
+      end
+    end
+
 ```
+
+You can ever extend arbitrary instance of any class with your trait:
+
+```ruby
+
+    module HtmlSanitizerTrait
+      extend Penetrator::Concern
+
+      def cleanup
+        ....
+      end
+    end
+
+    string_of_dirty_html = "Something <span>dirty</span> and even <marquee>fearing ugly</marquee>
+    string_of_dirty_html.behave_like 'html_sanitizer'
+
+```
+
 
 ## Contributing
 

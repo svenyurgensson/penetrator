@@ -22,6 +22,11 @@ module Penetrator
       end
     end
 
+    def extend_object(obj)
+      super
+      (class << obj; self; end).instance_exec(*@_trait_args, &@_included_block) if instance_variable_defined?("@_included_block")
+    end
+
     def included(base = nil, &block)
       if base.nil?
         @_included_block = block
