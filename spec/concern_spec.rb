@@ -58,35 +58,64 @@ describe 'behavior when trait add ClassMethods and Instance methods' do
 end
 
 
- describe 'behavior when trait add ClassMethods and Instance methods alongside with existing' do
-   module SuperRichTrait
-     extend Penetrator::Concern
-     module ClassMethods
-       def class_method(arg)
-         "From Trait with chaining"
-       end
-     end
+describe 'behavior when trait add ClassMethods and Instance methods alongside with existing' do
+  module SuperRichTrait
+    extend Penetrator::Concern
+    module ClassMethods
+      def class_method(arg)
+        "From Trait with chaining"
+      end
+    end
 
-     def instance_method(arg)
-       "From Trait with chaining"
-     end
-   end
+    def instance_method(arg)
+      "From Trait with chaining"
+    end
+  end
 
-   it 'add class and instance methods from traits' do
-     class Innocent
-       def self.class_method arg
-         "This is class argument: #{arg} " + super
-       end
-       def instance_method arg
-         "This is instance argument: #{arg} " + super
-       end
+  it 'add class and instance methods from traits' do
+    class Innocent
+      def self.class_method arg
+        "This is class argument: #{arg} " + super
+      end
+      def instance_method arg
+        "This is instance argument: #{arg} " + super
+      end
 
-       behaves_like 'super_rich'
-     end
+      behaves_like 'super_rich'
+    end
 
-     obj = Innocent.new
-     obj.instance_method('iarg').must_be :==, 'This is instance argument: iarg From Trait with chaining'
-     Innocent.class_method('carg').must_be :==, 'This is class argument: carg From Trait with chaining'
-   end
+    obj = Innocent.new
+    obj.instance_method('iarg').must_be :==, 'This is instance argument: iarg From Trait with chaining'
+    Innocent.class_method('carg').must_be :==, 'This is class argument: carg From Trait with chaining'
+  end
+
+end
+
+
+
+describe 'behavior when trait utilize arguments and block for i' do
+  module WithArgsAndBlockTrait
+    extend Penetrator::Concern
+    included do |*args, &block|
+      args.each do |method_name|
+        define_method(method_name) do
+          method_name.to_s
+        end
+      end
+      yield if block_given?
+    end # included
+  end # WithArgsAndBlockTrait
+
+  it 'receive trait block' do
+    class Victim
+      behaves_like :CanHaveArgs, 'arg1' do
+        @victim = "I'm set"
+      end
+    end
+    obj = Victim.new
+    obj.must_respond_to :arg1
+    obj.arg1.must_be :==, 'arg1'
+    obj.instance_variable_get(:@vivtim).must_be :==, "I'm set"
+  end
 
 end
