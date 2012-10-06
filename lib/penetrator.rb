@@ -44,6 +44,13 @@ module Penetrator
         include trait
       end
     end # ClassMethods
+
+    def behaves_like(trait_name, *args)
+      full_name = "#{Penetrator::Inflector.camelize(trait_name.to_s)}Trait"
+      trait = Penetrator::Inflector.constantize(full_name)
+      trait.instance_variable_set(:@_trait_args, args)
+      extend trait
+    end
   end # Behavior
 
 end

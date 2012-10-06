@@ -3,7 +3,7 @@ require 'penetrator'
 require 'minitest/spec'
 require 'minitest/autorun'
 
-describe 'behavior when trait can be parameterized by arguments passed into included module' do
+describe 'behavior when trait parameterized by arguments passed into included module' do
   module CanHaveArgsTrait
     extend Penetrator::Concern
     included do |*args|
@@ -88,5 +88,30 @@ end
      obj.instance_method('iarg').must_be :==, 'This is instance argument: iarg From Trait with chaining'
      Innocent.class_method('carg').must_be :==, 'This is class argument: carg From Trait with chaining'
    end
+
+end
+
+describe 'when object of any class extended by trait' do
+  module ObjectRelatedTrait
+    extend Penetrator::Concern
+    def testing_method
+      "It Works!"
+    end
+  end
+
+  it 'could extend particular object' do
+     object = Object.new
+     object.behaves_like "object_related"
+     object.must_respond_to :testing_method
+     object.testing_method.must_be :==, 'It Works!'
+  end
+
+  it 'not extend others objects the same class' do
+     object = Object.new
+     object.behaves_like "object_related"
+
+     second_object = Object.new
+     second_object.wont_respond_to :testing_method
+  end
 
 end
