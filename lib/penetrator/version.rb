@@ -5,7 +5,7 @@ module Penetrator
   module Version
     MAJOR = 0
     MINOR = 1
-    PATCH = 6
+    PATCH = 8
 
     # Returns a version string by joining <tt>MAJOR</tt>, <tt>MINOR</tt>, and <tt>PATCH</tt> with <tt>'.'</tt>
     #

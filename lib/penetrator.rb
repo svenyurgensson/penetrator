@@ -18,20 +18,22 @@ module Penetrator
         @_dependencies.each { |dep| base.send(:include, dep) }
         super
         base.extend const_get("ClassMethods") if const_defined?("ClassMethods")
+        return unless instance_variable_defined?("@_included_block")
         if @_trait_block
-          base.class_exec(*@_trait_args, @_trait_block, &@_included_block) if instance_variable_defined?("@_included_block")
+          base.class_exec(*@_trait_args, @_trait_block, &@_included_block)
         else
-          base.class_exec(*@_trait_args, &@_included_block) if instance_variable_defined?("@_included_block")
+          base.class_exec(*@_trait_args, &@_included_block)
         end
       end
     end
 
     def extend_object(obj)
       super
+      return unless instance_variable_defined?("@_included_block")
       if @_trait_block
-        (class << obj; self; end).instance_exec(*@_trait_args, @_trait_block, &@_included_block) if instance_variable_defined?("@_included_block")
+        (class << obj; self; end).instance_exec(*@_trait_args, @_trait_block, &@_included_block)
       else
-        (class << obj; self; end).instance_exec(*@_trait_args, &@_included_block) if instance_variable_defined?("@_included_block")
+        (class << obj; self; end).instance_exec(*@_trait_args, &@_included_block)
       end
     end
 

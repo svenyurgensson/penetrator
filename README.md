@@ -70,6 +70,7 @@ File: *app/controllers/traits/crudable_trait.rb*
             @_resources ||= resource_class.order(default_order).all
           end
        end
+
 ```
 
 File: *app/controllers/accomodations_controller.rb*
@@ -136,13 +137,13 @@ File:  *app/models/my_model.rb*
 ```ruby
 
     class Victim
-      behaves_like :CanHaveArgs, 'arg1', 'arg2'
+      behaves_like :CanHaveArgs, 'first', 'second'
     end
 
     obj = Victim.new
 
-    obj.arg1  # => 'arg1-chunked!'
-    obj.arg2  # => 'arg2-chunked!'
+    obj.first   # => first-chunked!
+    obj.second  # => second-chunked!
 
 ```
 
@@ -154,7 +155,7 @@ Also you can freely utilize `ClassMethods` internal module as you usually do wit
       extend Penetrator::Concern
       module ClassMethods
         def class_method
-          ... add what you want ...
+          # ... add what you want ...
         end
       end
 
@@ -172,14 +173,36 @@ You can even extend arbitrary instance of any class with your trait:
       extend Penetrator::Concern
 
       def cleanup
-        ....
+        # ...
       end
     end
 
     string_of_dirty_html = "Something <span>dirty</span> and even <marquee>fearing ugly</marquee>"
     string_of_dirty_html.behave_like 'html_sanitizer'
-    ...
 
+```
+
+`behave_like` also accepts block which can be used in `included` section.
+I have no idea whom need that, but decided to make it possible.
+
+```ruby
+
+    module HtmlSanitizerTrait
+      included do |*args, block|
+        args.each do |method_name|
+          define_method(method_name) do
+            method_name.to_s
+          end
+       end
+       block.call if block
+     end # included
+
+    class VictimWithBlock
+      behaves_like :HtmlSanitizerTrait, 'cleanup_processor' do
+        class_variable_set(:@@foo, "I'm set")
+        # ... something useful
+      end
+    end
 
 ```
 

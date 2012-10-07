@@ -93,29 +93,30 @@ end
 
 
 
-describe 'behavior when trait utilize arguments and block for i' do
+describe 'behavior when trait utilize arguments and block' do
   module WithArgsAndBlockTrait
     extend Penetrator::Concern
-    included do |*args, &block|
+    included do |*args, block|
       args.each do |method_name|
         define_method(method_name) do
           method_name.to_s
         end
       end
-      yield if block_given?
+      block.call if block
     end # included
+
   end # WithArgsAndBlockTrait
 
   it 'receive trait block' do
-    class Victim
-      behaves_like :CanHaveArgs, 'arg1' do
-        @victim = "I'm set"
+    class VictimWithBlock
+      behaves_like :WithArgsAndBlock, 'arg1' do
+        class_variable_set(:@@foo, "I'm set")
       end
     end
-    obj = Victim.new
+    obj = VictimWithBlock.new
     obj.must_respond_to :arg1
     obj.arg1.must_be :==, 'arg1'
-    obj.instance_variable_get(:@vivtim).must_be :==, "I'm set"
+    VictimWithBlock.class_variable_get(:@@foo).must_be :==, "I'm set"
   end
 
 end
