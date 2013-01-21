@@ -32,6 +32,8 @@ File: *app/controllers/traits/crudable_trait.rb*
 ```ruby
 
       module CrudableTrait
+        extend Penetrator::Concern
+        
         included do
          helper_method :resource, :resources # they are will be used in views
         end
